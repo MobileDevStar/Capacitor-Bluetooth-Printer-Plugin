@@ -206,13 +206,13 @@ public class BTPrinter extends Plugin {
 
             int recode = com.rebelity.plugins.btprinter.utils.SettingUtil.getInstance().getDefaultStringEncodingIndex();
 
-            if (recode < 17) {
-                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.singleByte());
-                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.setCodeSystemSingle(codeParse(recode)));
-            } else {
-                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.singleByteOff());
-                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.setCodeSystem(codeParse(recode)));
-            }
+//            if (recode < 17) {
+//                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.singleByte());
+//                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.setCodeSystemSingle(codeParse(recode)));
+//            } else {
+//                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.singleByteOff());
+//                com.rebelity.plugins.btprinter.utils.BluetoothUtil.sendData(com.rebelity.plugins.btprinter.utils.ESCUtil.setCodeSystem(codeParse(recode)));
+//            }
 
             String stringEncoding = com.rebelity.plugins.btprinter.utils.SettingUtil.getInstance().getStringEncoding(recode);
 
