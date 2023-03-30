@@ -19,13 +19,22 @@ import com.rebelity.plugins.btprinter.sunmi.SunmiBluetoothUtil;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Map;
 
-@CapacitorPlugin(name = "BTPrinter", requestCodes={BTPrinterPlugin.REQUEST_BLUETOOTH})
+@CapacitorPlugin(name = "BTPrinter", requestCodes={
+        BTPrinterPlugin.REQUEST_BLUETOOTH, BTPrinterPlugin.REQUEST_INTERNET, BTPrinterPlugin.REQUEST_ACCESS_NETWORK_STATE
+})
 public class BTPrinterPlugin extends Plugin {
     protected static final String TAG = "BTPrinter";
     protected static final int REQUEST_BLUETOOTH = 1990;
+    protected static final int REQUEST_INTERNET = 1991;
+    protected static final int REQUEST_ACCESS_NETWORK_STATE = 1992;
 
     private static final String Innerprinter_Address = "00:11:22:33:44:55";
 
@@ -190,6 +199,37 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
+        call.success(ret);
+    }
+
+    @PluginMethod
+    public void getIPAddress(PluginCall call) {
+        pluginRequestPermission(Manifest.permission.INTERNET, REQUEST_INTERNET);
+        pluginRequestPermission(Manifest.permission.INTERNET, REQUEST_ACCESS_NETWORK_STATE);
+
+        String ip = "";
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                        ip = inetAddress.getHostAddress();
+                        break;
+                    }
+                }
+                if (ip.length() > 0) {
+                    break;
+                }
+            }
+        } catch (SocketException ex) {
+            ex.printStackTrace();
+        }
+
+        Log.e(TAG, "IP ADDRESS: " + ip);
+
+        JSObject ret = new JSObject();
+        ret.put("result", ip);
         call.success(ret);
     }
 

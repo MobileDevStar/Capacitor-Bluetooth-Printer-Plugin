@@ -7,4 +7,5 @@ export interface BTPrinterPlugin {
   printBarcode(options: {barcode: string, width: number, height: number}): Promise<{results: boolean}>;
   printCommand(options: {command: string}): Promise<{results: boolean}>;
   openCashRegister(): Promise<{results: boolean}>;
+  getIPAddress(): Promise<{result: string}>;
 }

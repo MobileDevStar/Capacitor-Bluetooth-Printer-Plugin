@@ -66,4 +66,10 @@ export class BTPrinterWeb extends WebPlugin implements BTPrinterPlugin {
       results: true
     };
   }
+
+  async getIPAddress(): Promise<{ result: string }> {
+    return {
+      result: ''
+    };
+  }
 }
