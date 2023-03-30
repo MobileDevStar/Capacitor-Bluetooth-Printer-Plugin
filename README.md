@@ -14,6 +14,13 @@ npx cap sync
 <docgen-index>
 
 * [`echo(...)`](#echo)
+* [`discoverPrinters()`](#discoverprinters)
+* [`connectPrinter(...)`](#connectprinter)
+* [`disconnectPrinter()`](#disconnectprinter)
+* [`printString(...)`](#printstring)
+* [`printBarcode(...)`](#printbarcode)
+* [`printCommand(...)`](#printcommand)
+* [`openCashRegister()`](#opencashregister)
 
 </docgen-index>
 
@@ -31,6 +38,99 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 | **`options`** | <code>{ value: string; }</code> |
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### discoverPrinters()
+
+```typescript
+discoverPrinters() => Promise<{ results: any[]; }>
+```
+
+**Returns:** <code>Promise&lt;{ results: any[]; }&gt;</code>
+
+--------------------
+
+
+### connectPrinter(...)
+
+```typescript
+connectPrinter(options: { address: string; }) => Promise<{ results: boolean; }>
+```
+
+| Param         | Type                              |
+| ------------- | --------------------------------- |
+| **`options`** | <code>{ address: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### disconnectPrinter()
+
+```typescript
+disconnectPrinter() => Promise<{ results: boolean; }>
+```
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### printString(...)
+
+```typescript
+printString(options: { contents: string; is_bold: boolean; is_underline: boolean; }) => Promise<{ results: boolean; }>
+```
+
+| Param         | Type                                                                        |
+| ------------- | --------------------------------------------------------------------------- |
+| **`options`** | <code>{ contents: string; is_bold: boolean; is_underline: boolean; }</code> |
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### printBarcode(...)
+
+```typescript
+printBarcode(options: { barcode: string; width: number; height: number; }) => Promise<{ results: boolean; }>
+```
+
+| Param         | Type                                                             |
+| ------------- | ---------------------------------------------------------------- |
+| **`options`** | <code>{ barcode: string; width: number; height: number; }</code> |
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### printCommand(...)
+
+```typescript
+printCommand(options: { command: string; }) => Promise<{ results: boolean; }>
+```
+
+| Param         | Type                              |
+| ------------- | --------------------------------- |
+| **`options`** | <code>{ command: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### openCashRegister()
+
+```typescript
+openCashRegister() => Promise<{ results: boolean; }>
+```
+
+**Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
 
 --------------------
 
