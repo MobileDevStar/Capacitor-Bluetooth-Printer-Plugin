@@ -21,6 +21,7 @@ npx cap sync
 * [`printBarcode(...)`](#printbarcode)
 * [`printCommand(...)`](#printcommand)
 * [`openCashRegister()`](#opencashregister)
+* [`getIPAddress()`](#getipaddress)
 
 </docgen-index>
 
@@ -131,6 +132,17 @@ openCashRegister() => Promise<{ results: boolean; }>
 ```
 
 **Returns:** <code>Promise&lt;{ results: boolean; }&gt;</code>
+
+--------------------
+
+
+### getIPAddress()
+
+```typescript
+getIPAddress() => Promise<{ result: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ result: string; }&gt;</code>
 
 --------------------
 
