@@ -1,6 +1,6 @@
 {
   "name": "capacitor-plugin-bluetooth-printer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This is a capacitor plugin for the bluetooth printer",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

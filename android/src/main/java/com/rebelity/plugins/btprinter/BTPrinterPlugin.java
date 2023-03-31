@@ -6,14 +6,17 @@ import static com.rebelity.plugins.btprinter.Define.PRINT_ALIGN_RIGHT;
 import static com.rebelity.plugins.btprinter.Define.PRINT_NEXT_LINE;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
 import com.rebelity.plugins.btprinter.sunmi.SunmiBluetoothUtil;
 
 import org.json.JSONArray;
@@ -27,14 +30,18 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 
-@CapacitorPlugin(name = "BTPrinter", requestCodes={
-        BTPrinterPlugin.REQUEST_BLUETOOTH, BTPrinterPlugin.REQUEST_INTERNET, BTPrinterPlugin.REQUEST_ACCESS_NETWORK_STATE
-})
+@RequiresApi(api = Build.VERSION_CODES.S)
+@CapacitorPlugin(
+        name = "BTPrinter",
+        permissions = {
+                @Permission(strings = { Manifest.permission.BLUETOOTH }, alias = "bluetooth"),
+                @Permission(strings = { Manifest.permission.BLUETOOTH_CONNECT }, alias = "bluetooth_connect"),
+                @Permission(strings = { Manifest.permission.INTERNET }, alias = "internet"),
+                @Permission(strings = { Manifest.permission.ACCESS_NETWORK_STATE }, alias = "network_state")
+        }
+    )
 public class BTPrinterPlugin extends Plugin {
     protected static final String TAG = "BTPrinter";
-    protected static final int REQUEST_BLUETOOTH = 1990;
-    protected static final int REQUEST_INTERNET = 1991;
-    protected static final int REQUEST_ACCESS_NETWORK_STATE = 1992;
 
     private static final String Innerprinter_Address = "00:11:22:33:44:55";
 
@@ -62,8 +69,7 @@ public class BTPrinterPlugin extends Plugin {
 
     @PluginMethod()
     public void discoverPrinters(PluginCall call) {
-        saveCall(call);
-        pluginRequestPermission(Manifest.permission.BLUETOOTH, REQUEST_BLUETOOTH);
+        loadDevices(call);
     }
 
     @PluginMethod()
@@ -72,23 +78,16 @@ public class BTPrinterPlugin extends Plugin {
         Log.d(TAG, "address: " + address);
 
         Boolean isConnected = false;
-        if (address.equalsIgnoreCase(Innerprinter_Address)) {
-            isSunmiDevice = true;
-        } else {
-            isSunmiDevice = false;
-        }
+        assert address != null;
+        isSunmiDevice = address.equalsIgnoreCase(Innerprinter_Address);
 
         SunmiBluetoothUtil.disconnectBlueTooth(getContext());
 
-        if(!SunmiBluetoothUtil.connectBlueToothByAddress(getContext(), address)){
-            isConnected = false;
-        } else {
-            isConnected = true;
-        }
+        isConnected = SunmiBluetoothUtil.connectBlueToothByAddress(getContext(), address);
 
         JSObject ret = new JSObject();
         ret.put("results", isConnected);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -102,7 +101,7 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -121,7 +120,7 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -142,7 +141,7 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -185,7 +184,7 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -199,14 +198,11 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("results", true);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod
     public void getIPAddress(PluginCall call) {
-        pluginRequestPermission(Manifest.permission.INTERNET, REQUEST_INTERNET);
-        pluginRequestPermission(Manifest.permission.INTERNET, REQUEST_ACCESS_NETWORK_STATE);
-
         String ip = "";
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
@@ -218,6 +214,7 @@ public class BTPrinterPlugin extends Plugin {
                         break;
                     }
                 }
+                assert ip != null;
                 if (ip.length() > 0) {
                     break;
                 }
@@ -230,31 +227,7 @@ public class BTPrinterPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("result", ip);
-        call.success(ret);
-    }
-
-    @Override
-    protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
-        PluginCall savedCall = getSavedCall();
-        if (savedCall == null) {
-            Log.d(TAG, "No stored plugin call for permissions request result");
-            return;
-        }
-
-        for(int result : grantResults) {
-            if (result == PackageManager.PERMISSION_DENIED) {
-                Log.d(TAG, "User denied permission");
-                return;
-            }
-        }
-
-        if (requestCode == REQUEST_BLUETOOTH) {
-            // We got the permission!
-            loadDevices(savedCall);
-        }
+        call.resolve(ret);
     }
 
     @Override
@@ -273,7 +246,7 @@ public class BTPrinterPlugin extends Plugin {
         JSONArray jsonArray = new JSONArray(deviceList);
         JSObject ret = new JSObject();
         ret.put("results", jsonArray);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     private void printStringBySunmiPrinter(String content, boolean isBold, boolean isUnderLine) {
@@ -316,7 +289,6 @@ public class BTPrinterPlugin extends Plugin {
         byte res = 0x00;
         switch (value) {
             case 0:
-                res = 0x00;
                 break;
             case 1:
             case 2:
